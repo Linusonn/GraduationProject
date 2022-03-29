@@ -9,9 +9,9 @@
 
 
 export default {
-  name: 'HomeView',
+  name: 'Home',
   components: {
-    HelloWorld
+
   }
 }
 </script>
