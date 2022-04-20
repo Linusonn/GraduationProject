@@ -4,23 +4,12 @@
         style="width: 200px; min-height: calc(100vh - 50px)"
         default-active="2"
         class="el-menu-vertical-demo"
+        :default-openeds='["1"]'
     >
       <el-sub-menu index="1">
-        <template #title>选项1</template>
-        <el-menu-item index="1-1">Navigator One-one</el-menu-item>
+        <template #title>系统管理</template>
+        <el-menu-item index="user">用户管理</el-menu-item>
       </el-sub-menu>
-      <el-menu-item index="2">
-        <el-icon><icon-menu /></el-icon>
-        <span>Navigator Two</span>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <el-icon><document /></el-icon>
-        <span>Navigator Three</span>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon><setting /></el-icon>
-        <span>Navigator Four</span>
-      </el-menu-item>
     </el-menu>
   </div>
 </template>

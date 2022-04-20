@@ -79,5 +79,6 @@
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-annotation:3.5.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:4.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.6.6" level="project" />
+    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.8.0.M3" level="project" />
   </component>
 </module>

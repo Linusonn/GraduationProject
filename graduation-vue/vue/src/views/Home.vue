@@ -1,15 +1,15 @@
 <template>
   <div style="padding: 10px">
-<!--    功能区域-->
+    <!--    功能区域-->
     <div style="margin: 10px 0">
       <el-button type="primary" @click="add">新增</el-button>
       <el-button type="primary">导入</el-button>
       <el-button type="primary">导出</el-button>
     </div>
-<!--    搜索区域-->
+    <!--    搜索区域-->
     <div style="margin: 10px 0">
-      <el-input v-model="search" placeholder="Please input" style="width: 20%"/>
-      <el-button type="primary" style="margin-left: 5px">查询</el-button>
+      <el-input v-model="search" placeholder="Please input" style="width: 20%" clearable/>
+      <el-button type="primary" style="margin-left: 5px" @click="load">查询</el-button>
     </div>
 
     <el-table :data="tableData" border stripe style="width: 100%">
@@ -20,9 +20,9 @@
       <el-table-column prop="sex" label="性别" sortable/>
       <el-table-column prop="address" label="地址" sortable/>
       <el-table-column fixed="right" label="Operations" width="120">
-        <template #default>
-          <el-button type="text"  @click="handleEdit">Edit</el-button>
-          <el-popconfirm title="Are you sure to delete this?">
+        <template #default="scope">
+          <el-button type="text" @click="handleEdit(scope.row)">Edit</el-button>
+          <el-popconfirm title="Are you sure to delete this?" @confirm="handleDelete(scope.row.id)">
             <template #reference>
               <el-button type="text" >Delete</el-button>
             </template>
@@ -33,7 +33,7 @@
     <div style="margin: 10px 0">
       <el-pagination
           :currentPage="currentPage"
-          :page-size="10"
+          :page-size="pageSize"
           :page-sizes="[5, 10, 20]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -83,39 +83,109 @@
 // @ is an alias to /src
 
 
+import request from "../../utils/request";
+
 export default {
   name: 'Home',
-  components: {
-
-  },
+  components: {},
   data() {
-    return{
-      search:'',
-      tableData:[
-
-      ],
-      total:10,
-      currentPage:1,
-      dialogVisible:false,
-      form:{}
+    return {
+      search: '',
+      tableData: [],
+      total: 0,
+      currentPage: 1,
+      pageSize: 10,
+      dialogVisible: false,
+      form: {}
     }
   },
-  methods:{
-    add(){
-      this.dialogVisible =true
-      this.form={}
+  created() {
+    this.load()
+  },
+  methods: {
+    load() {
+      request.get("/user", {
+        params: {
+          pageNum: this.currentPage,
+          pageSize: this.pageSize,
+          search: this.search
+        }
+      }).then(res => {
+        console.log(res),
+            this.tableData = res.data["records"],
+            this.total = res.data["total"]
+      })
     },
-    save(){
+    add() {
+      this.dialogVisible = true
+      this.form = {}
+    },
+    save() {
+      if (this.form.id) {
+        request.put("/user", this.form).then(res => {
+          console.log(res)
+          if(res.code == '0'){
+            this.$message({
+              type:"success",
+              message:"Update Success"
+            })
+          }else{
+            this.$message({
+              type:"error",
+              message:res.msg
+            })
+          }
+          this.load()
+          this.dialogVisible = false
+        })
+      } else {
+        request.post("/user", this.form).then(res => {
+          console.log(res)
+          if(res.code == '0'){
+            this.$message({
+              type:"success",
+              message:"Update Success"
+            })
+          }else{
+            this.$message({
+              type:"error",
+              message:res.msg
+            })
+          }
+          this.load()
+          this.dialogVisible = false
+        })
+      }
 
     },
-    handleEdit(){
-
+    handleDelete(id){
+    console.log(id)
+      request.delete("/user/" + id).then(res => {
+        if(res.code == '0'){
+          this.$message({
+            type:"success",
+            message:"Delete Success"
+          })
+        }else{
+          this.$message({
+            type:"error",
+            message:res.msg
+          })
+        }
+        this.load()
+      })
     },
-    handleSizeChange(){
-
+    handleEdit(row) {
+      this.form = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true;
     },
-    handleCurrentChange(){
-
+    handleSizeChange(pageSize) {
+      this.pageSize=pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      this.currentPage=pageNum
+      this.load()
     }
   }
 }
